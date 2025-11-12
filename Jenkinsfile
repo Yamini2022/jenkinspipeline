@@ -2,10 +2,9 @@ pipeline {
     agent any
 
     environment {
-        // 🧭 AWS Configuration
-        AWS_ACCOUNT_ID = '716619698758'       // 🔁 Your AWS Account ID
-        AWS_REGION     = 'us-east-1'          // 🔁 Your AWS region
-        IMAGE_NAME     = 'sampledockerimage'  // 🔁 Any Docker image name
+        AWS_ACCOUNT_ID = '716619698758'   // 🔁 replace with your AWS Account ID
+        AWS_REGION     = 'us-east-1'      // 🔁 replace with your AWS region
+        IMAGE_NAME     = 'sampledockerimage'
         ECR_REPO       = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${IMAGE_NAME}"
     }
 
@@ -13,14 +12,15 @@ pipeline {
 
         stage('Checkout Code') {
             steps {
-                echo '📦 Fetching code from public GitHub repository...'
+                echo '📦 Fetching code from GitHub...'
+                // Public repo → no credentials needed
                 git branch: 'main', url: 'https://github.com/Yamini2022/jenkinspipeline.git'
             }
         }
 
         stage('Build with Maven') {
             steps {
-                echo '🔨 Building application using Maven...'
+                echo '🔨 Building the application using Maven...'
                 sh 'mvn clean package -DskipTests'
             }
         }
@@ -34,17 +34,19 @@ pipeline {
 
         stage('Login to AWS ECR') {
             steps {
-                echo '🔐 Authenticating Docker to AWS ECR...'
-                sh '''
-                    aws ecr get-login-password --region ${AWS_REGION} \
-                    | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com
-                '''
+                echo '🔐 Logging in to AWS ECR...'
+                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-creds']]) {
+                    sh '''
+                        aws ecr get-login-password --region ${AWS_REGION} \
+                        | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com
+                    '''
+                }
             }
         }
 
-        stage('Push Image to ECR') {
+        stage('Tag & Push Docker Image') {
             steps {
-                echo '🚀 Tagging and pushing image to AWS ECR...'
+                echo '🚀 Tagging and pushing Docker image to ECR...'
                 sh '''
                     docker tag ${IMAGE_NAME}:latest ${ECR_REPO}:latest
                     docker push ${ECR_REPO}:latest
@@ -65,10 +67,10 @@ pipeline {
 
     post {
         success {
-            echo '✅ Pipeline completed successfully! Image pushed to AWS ECR.'
+            echo '✅ Pipeline completed successfully!'
         }
         failure {
-            echo '❌ Pipeline failed. Please check console output for errors.'
+            echo '❌ Pipeline failed. Check the console output for errors.'
         }
     }
 }
