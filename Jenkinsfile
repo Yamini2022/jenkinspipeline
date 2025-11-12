@@ -2,18 +2,16 @@ pipeline {
     agent any
 
     environment {
-        AWS_ACCOUNT_ID = '716619698758'   // 🔁 replace with your AWS Account ID
-        AWS_REGION     = 'us-east-1'      // 🔁 replace with your AWS region
+        AWS_ACCOUNT_ID = '716619698758'   // 🔁 Replace with your AWS Account ID
+        AWS_REGION     = 'us-east-1'      // 🔁 Replace with your AWS region
         IMAGE_NAME     = 'sampledockerimage'
         ECR_REPO       = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${IMAGE_NAME}"
     }
 
     stages {
-
         stage('Checkout Code') {
             steps {
                 echo '📦 Fetching code from GitHub...'
-                // Public repo → no credentials needed
                 git branch: 'main', url: 'https://github.com/Yamini2022/jenkinspipeline.git'
             }
         }
@@ -70,7 +68,7 @@ pipeline {
             echo '✅ Pipeline completed successfully!'
         }
         failure {
-            echo '❌ Pipeline failed. Check the console output for errors.'
+            echo '❌ Pipeline failed. Check console output for details.'
         }
     }
 }
