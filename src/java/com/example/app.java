@@ -2,6 +2,7 @@ package com.example;
 
 public class App {
     public static void main(String[] args) {
-        System.out.println("🚀 Hello from Jenkins + Maven + Docker + ECR!");
+        System.out.println("🚀 Hello from Jenkins + Maven + Docker + AWS ECR!");
     }
 }
+
