@@ -11,7 +11,7 @@ pipeline {
     stages {
         stage('Checkout Code') {
             steps {
-                echo '📦 Fetching code from GitHub...'
+                echo '📦 Fetching code from GitHub surya...'
                 git branch: 'main', url: 'https://github.com/Yamini2022/jenkinspipeline.git'
             }
         }
