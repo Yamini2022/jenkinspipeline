@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     environment {
-        AWS_ACCOUNT_ID = '716619698758'      // Replace with your AWS Account ID
-        AWS_REGION = 'us-east-1'             // Replace with your region
+        AWS_ACCOUNT_ID = '716619698758'
+        AWS_REGION = 'us-east-1'
         IMAGE_NAME = 'sampledockerimage'
         ECR_REPO = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${IMAGE_NAME}"
     }
