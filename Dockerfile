@@ -1,12 +1,7 @@
-# Start from an official JDK image
-FROM amazoncorretto:17-alpine
+# Use an OpenJDK base
+FROM eclipse-temurin:17-jre-alpine
 
-# Set working directory
-WORKDIR /app
+ARG JAR_FILE=target/simple-maven-app-1.0.0.jar
+COPY ${JAR_FILE} /app/app.jar
 
-# Copy JAR from Maven target folder
-COPY target/sampledockerimage-1.0-SNAPSHOT.jar app.jar
-
-# Run the JAR
-ENTRYPOINT ["java", "-jar", "app.jar"]
-
+ENTRYPOINT ["java","-jar","/app/app.jar"]
